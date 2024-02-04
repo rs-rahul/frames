@@ -308,6 +308,7 @@ export const frameSizes = [
   { id: "A2", name: "A2", length: 594 / 25.4, breadth: 420 / 25.4 },
   { id: "12x15", name: "12x15", length: 15, breadth: 12 },
   { id: "12x18", name: "12x18", length: 18, breadth: 12 },
+  { id: "12x24", name: "12x24", length: 24, breadth: 12 },
   { id: "18x24", name: "18x24", length: 24, breadth: 18 },
   { id: "20x30", name: "20x30", length: 30, breadth: 20 },
   { id: "24x36", name: "24x36", length: 36, breadth: 24 },
