@@ -1,6 +1,6 @@
 import Select from "react-select";
 import { useMemo, useState } from "react";
-import { Form, FormLabel } from "react-bootstrap";
+import { Form, FormLabel, Table } from "react-bootstrap";
 
 import { frameSizes, frames } from "./constants";
 import { calulatePrice, ceilToNearest } from "./helpers/frame";
@@ -42,7 +42,7 @@ function App() {
   });
   const [selectedSize, setSelectedSize] = useState(frameSizes[0]);
 
-  const getTotalPrice = (frameData) => {
+  const getTotalPrice = (frameData, configuration = {}) => {
     const frame = frameData || formData.frame;
 
     if (!frame) {
@@ -50,12 +50,12 @@ function App() {
     }
 
     return calulatePrice({
-      lengthInInches: formData.length,
-      breadthInInches: formData.breadth,
+      lengthInInches: configuration.length || formData.length,
+      breadthInInches: configuration.breadth || formData.breadth,
       frameRatePerFeet: frame.ratePerFeet,
-      hasGlass: formData.hasGlass,
-      hasMount: formData.hasMount,
-      hasCardboard: formData.hasCardboard,
+      hasGlass: configuration.hasGlass || formData.hasGlass,
+      hasMount: configuration.hasMount || formData.hasMount,
+      hasCardboard: configuration.hasCardboard || formData.hasCardboard,
       frameWidthInMillis: frame.width,
     });
   };
@@ -224,7 +224,7 @@ function App() {
               {formData?.frame?.name || formData?.frame?.id}
             </span>
           </div>
-          <div style={{ fontSize: 24 }}>
+          <div style={{ fontSize: 24 }} className="mb-3">
             Total Cost:{" "}
             <span className="text-danger">
               Rs. {ceilToNearest(totalPrice, 25)}{" "}
@@ -233,6 +233,42 @@ function App() {
               </span>
             </span>
           </div>
+
+          <h2 className="mb-2">Cost of other frames</h2>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Frame Name</th>
+                <th>Cost Without Mount</th>
+                <th>Cost With Mount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {frames
+                .filter((frame) => frame.id !== "custom")
+                .map((frame, index) => (
+                  <tr key={frame.id}>
+                    <td>{index + 1}</td>
+                    <td>{frame.name}</td>
+                    <td>
+                      Rs.{" "}
+                      {ceilToNearest(
+                        getTotalPrice(frame, { ...formData, hasMount: false }),
+                        25
+                      )}
+                    </td>
+                    <td>
+                      Rs.{" "}
+                      {ceilToNearest(
+                        getTotalPrice(frame, { ...formData, hasMount: true }),
+                        25
+                      )}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </Table>
         </>
       ) : null}
     </div>
