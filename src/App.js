@@ -1,6 +1,6 @@
 import Select from "react-select";
 import { useMemo, useState } from "react";
-import { Form, FormLabel, Table } from "react-bootstrap";
+import { Form, FormLabel, Table, Modal } from "react-bootstrap";
 
 import { frameSizes, frames } from "./constants";
 import { calulatePrice, ceilToNearest } from "./helpers/frame";
@@ -11,16 +11,7 @@ const Frame = ({ id, name, imageUrl }) => {
     <div
       style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 24 }}
     >
-      {name || id}{" "}
-      <span
-        className="bg-danger"
-        style={{
-          display: "inline-block",
-          height: 50,
-          width: 50,
-          background: `url(${imageUrl})`,
-        }}
-      ></span>
+      {name || id}
     </div>
   );
 };
@@ -41,6 +32,7 @@ function App() {
     hasCardboard: true,
   });
   const [selectedSize, setSelectedSize] = useState(frameSizes[0]);
+  const [opened, setOpened] = useState(false);
 
   const getTotalPrice = (frameData, configuration = {}) => {
     const frame = frameData || formData.frame;
@@ -70,15 +62,36 @@ function App() {
 
   const totalPrice = useMemo(getTotalPrice, [formData]);
   const isCustomSize = selectedSize.id === "custom";
+  const modal = (
+    <Modal show={opened} onHide={() => setOpened(false)}>
+      <Modal.Header closeButton>
+        <Modal.Title>Frame: {formData?.frame?.name}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <img src={formData?.frame?.imageUrl} width="100%" />
+      </Modal.Body>
+    </Modal>
+  );
 
   return (
     <div className="wrapper">
+      {modal}
       <Form
         onSubmit={onSubmit}
         style={{ border: "1px solid green", padding: 24, borderRadius: 8 }}
       >
         <Form.Group className="mb-3">
-          <FormLabel htmlFor="frame">Select Frame</FormLabel>
+          <FormLabel htmlFor="frame">Select Frame</FormLabel>{" "}
+          {formData?.frame?.imageUrl && (
+            <span
+              onClick={() => setOpened(true)}
+              className="text-danger cursor-pointer"
+              style={{ cursor: "pointer" }}
+            >
+              {" "}
+              (Show Image)
+            </span>
+          )}
           <Select
             inputId="frame"
             options={options}
