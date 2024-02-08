@@ -33,6 +33,7 @@ function App() {
   });
   const [selectedSize, setSelectedSize] = useState(frameSizes[0]);
   const [opened, setOpened] = useState(false);
+  const [modalData, setModalData] = useState({});
 
   const getTotalPrice = (frameData, configuration = {}) => {
     const frame = frameData || formData.frame;
@@ -65,10 +66,10 @@ function App() {
   const modal = (
     <Modal show={opened} onHide={() => setOpened(false)}>
       <Modal.Header closeButton>
-        <Modal.Title>Frame: {formData?.frame?.name}</Modal.Title>
+        <Modal.Title>Frame: {modalData?.frame?.name}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <img src={formData?.frame?.imageUrl} width="100%" />
+        <img src={modalData?.frame?.imageUrl} width="100%" />
       </Modal.Body>
     </Modal>
   );
@@ -84,7 +85,10 @@ function App() {
           <FormLabel htmlFor="frame">Select Frame</FormLabel>{" "}
           {formData?.frame?.imageUrl && (
             <span
-              onClick={() => setOpened(true)}
+              onClick={() => {
+                setModalData({ frame: formData.frame });
+                setOpened(true);
+              }}
               className="text-danger cursor-pointer"
               style={{ cursor: "pointer" }}
             >
@@ -263,7 +267,22 @@ function App() {
                 .map((frame, index) => (
                   <tr key={frame.id}>
                     <td>{index + 1}</td>
-                    <td>{frame.name}</td>
+                    <td>
+                      {frame.name}{" "}
+                      {frame.imageUrl && (
+                        <span
+                          onClick={() => {
+                            setModalData({ frame });
+                            setOpened(true);
+                          }}
+                          className="text-danger cursor-pointer"
+                          style={{ cursor: "pointer" }}
+                        >
+                          {" "}
+                          (Show Image)
+                        </span>
+                      )}
+                    </td>
                     <td>
                       Rs.{" "}
                       {ceilToNearest(
