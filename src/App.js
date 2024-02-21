@@ -248,6 +248,9 @@ function App() {
               <span className="text-primary" style={{ fontSize: 14 }}>
                 ({Math.ceil(totalPrice)})
               </span>
+              <span className="text-secondary" style={{ fontSize: 14 }}>
+                ({ceilToNearest(ceilToNearest(totalPrice, 25) * 0.56, 5)})
+              </span>
             </span>
           </div>
 
